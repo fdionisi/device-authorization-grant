@@ -1,4 +1,4 @@
-import { build } from "https://deno.land/x/dnt/mod.ts";
+import { build } from "https://deno.land/x/dnt@0.11.0/mod.ts";
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -13,7 +13,14 @@ await build({
     version: Deno.args[0],
     description:
       "A library to help implement the OAuth 2.0 Device Authorization Grant.",
+    author: "Federico Dionisi",
+    keywords: [
+      "cli",
+      "oauth",
+      "device code flow",
+    ],
     license: "MIT",
+    homepage: "https://github.com/fdionisi/device-authorization-grant#readme",
     repository: {
       type: "git",
       url: "git+https://github.com/fdionisi/device-authorization-grant.git",
