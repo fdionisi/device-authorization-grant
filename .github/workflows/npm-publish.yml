@@ -19,6 +19,10 @@ jobs:
         id: get_tag_version
         run: echo ::set-output name=TAG_VERSION::${GITHUB_REF/refs\/tags\//}
       
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: "1.8.2"
+      
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
