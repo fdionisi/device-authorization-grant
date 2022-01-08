@@ -3,7 +3,7 @@
  */
 import {
   DeviceAuthorizationGrant,
-  StateMachine,
+  YieldType,
   StorageProvider,
   Token,
 } from "../mod.ts";
@@ -35,18 +35,18 @@ const deviceAuthorizationGrant = new DeviceAuthorizationGrant(StorageProvider, {
   scope: "offline_access openid profile",
 });
 
-const stateMachine = deviceAuthorizationGrant.retrieveToken();
-let nextState = await stateMachine.next();
+const gen = deviceAuthorizationGrant.retrieveToken();
+let nextState = await gen.next();
 while (!nextState.done) {
   switch (nextState.value.state) {
-    case StateMachine.DeviceCode: {
+    case YieldType.DeviceCode: {
       console.log(nextState.value.data.verification_uri_complete);
       break;
     }
-    case StateMachine.Token: {
+    case YieldType.Token: {
       console.log(nextState.value.data);
       break;
     }
   }
-  nextState = await stateMachine.next();
+  nextState = await gen.next();
 }
