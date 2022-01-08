@@ -11,9 +11,8 @@ export class DeviceAuthorizationGrantError extends Error {
   constructor(
     type: DeviceAuthorizationGrantErrorType,
     message: string,
-    init?: ErrorInit,
   ) {
-    super(message, init);
+    super(message);
     this.type = type;
   }
 
@@ -23,11 +22,10 @@ export class DeviceAuthorizationGrantError extends Error {
 }
 
 export class UnknownError extends DeviceAuthorizationGrantError {
-  constructor(message?: string, init?: ErrorInit) {
+  constructor(message?: string) {
     super(
       DeviceAuthorizationGrantErrorType.Unknown,
       message || "Unknown error",
-      init,
     );
   }
 }
