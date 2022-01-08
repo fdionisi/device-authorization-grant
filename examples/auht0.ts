@@ -3,9 +3,9 @@
  */
 import {
   DeviceAuthorizationGrant,
-  YieldType,
   StorageProvider,
   Token,
+  YieldType,
 } from "../mod.ts";
 
 class InMemoryStorageProvider implements StorageProvider {

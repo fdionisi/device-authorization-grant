@@ -1,3 +1,8 @@
+import {
+  DeviceAuthorizationGrantError,
+  DeviceAuthorizationGrantErrorType,
+  UnknownError,
+} from "./error.ts";
 import type { DeviceCode, StorageProvider, TokenPayload } from "./types.ts";
 
 export interface Config {
@@ -115,23 +120,40 @@ export class DeviceAuthorizationGrant {
       if (response.status >= 400 && response.status < 500) {
         const json: any = await response.json();
         switch (json.error) {
+          case "slow_down": {
+            interval *= 2;
+          }
           case "authorization_pending": {
             await new Promise<void>((resolve) =>
               setTimeout(() => resolve(), interval * 1000)
             );
+            break;
+          }
+          case DeviceAuthorizationGrantErrorType.AccessDenied:
+          case DeviceAuthorizationGrantErrorType.ExpiredToken: {
+            throw new DeviceAuthorizationGrantError(
+              json.error,
+              json.error_description,
+            );
+          }
+          default: {
+            throw new UnknownError(`${json.error} - ${json.error_description}`);
           }
         }
         continue;
       }
 
       if (response.ok) {
-        return response.json() as any
+        return response.json() as any;
       }
-  
-      throw new Error(await response.text())
+
+      throw new UnknownError(await response.text());
     }
 
-    throw new Error("Time expired");
+    throw new DeviceAuthorizationGrantError(
+      DeviceAuthorizationGrantErrorType.Timeout,
+      "The initiated authorization flow reached its expiration time.",
+    );
   }
 
   async #refreshToken(refresh_token: string): Promise<TokenPayload> {
@@ -149,10 +171,10 @@ export class DeviceAuthorizationGrant {
     });
 
     if (response.ok) {
-      return response.json() as any
+      return response.json() as any;
     }
 
-    throw new Error(await response.text())
+    throw new UnknownError(await response.text());
   }
 
   async #requestDeviceCode(): Promise<DeviceCode> {
@@ -169,9 +191,9 @@ export class DeviceAuthorizationGrant {
     });
 
     if (response.ok) {
-      return response.json() as any
+      return response.json() as any;
     }
 
-    throw new Error(await response.text())
+    throw new UnknownError(await response.text());
   }
 }
