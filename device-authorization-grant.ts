@@ -125,7 +125,7 @@ export class DeviceAuthorizationGrant {
       }
 
       if (response.ok) {
-        return response.json()
+        return response.json() as any
       }
   
       throw new Error(await response.text())
@@ -149,7 +149,7 @@ export class DeviceAuthorizationGrant {
     });
 
     if (response.ok) {
-      return response.json()
+      return response.json() as any
     }
 
     throw new Error(await response.text())
@@ -169,7 +169,7 @@ export class DeviceAuthorizationGrant {
     });
 
     if (response.ok) {
-      return response.json()
+      return response.json() as any
     }
 
     throw new Error(await response.text())
