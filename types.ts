@@ -20,7 +20,7 @@ export interface Token {
   payload: TokenPayload;
 }
 
-export interface StorageProvider {
+export interface Storage {
   delete(): Promise<boolean>;
   read(): Promise<Token | undefined>;
   save(credentials: Token): Promise<void>;

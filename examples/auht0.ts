@@ -1,14 +1,9 @@
 /**
  * https://auth0.github.io/device-flow-playground/
  */
-import {
-  DeviceAuthorizationGrant,
-  StorageProvider,
-  Token,
-  YieldType,
-} from "../mod.ts";
+import { DeviceAuthorizationGrant, Storage, Token } from "../mod.ts";
 
-class InMemoryStorageProvider implements StorageProvider {
+class InMemoryStorage implements Storage {
   #token: Token | undefined;
 
   async save(token: Token): Promise<void> {
@@ -26,8 +21,8 @@ class InMemoryStorageProvider implements StorageProvider {
   }
 }
 
-const StorageProvider = new InMemoryStorageProvider();
-const deviceAuthorizationGrant = new DeviceAuthorizationGrant(StorageProvider, {
+const storage = new InMemoryStorage();
+const deviceAuthorizationGrant = new DeviceAuthorizationGrant(storage, {
   base_url: "https://acme-demo.auth0.com",
   client_id: "nZ8JDrV8Hklf3JumewRl2ke3ovPZn5Ho",
   audience: "urn:my-videos",
@@ -39,11 +34,11 @@ const gen = deviceAuthorizationGrant.retrieveToken();
 let nextState = await gen.next();
 while (!nextState.done) {
   switch (nextState.value.state) {
-    case YieldType.DeviceCode: {
+    case "device_code": {
       console.log(nextState.value.data.verification_uri_complete);
       break;
     }
-    case YieldType.Token: {
+    case "token": {
       console.log(nextState.value.data);
       break;
     }

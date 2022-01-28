@@ -3,7 +3,7 @@ import {
   DeviceAuthorizationGrantErrorType,
   UnknownError,
 } from "./error.ts";
-import type { DeviceCode, StorageProvider, TokenPayload } from "./types.ts";
+import type { DeviceCode, Storage, TokenPayload } from "./types.ts";
 
 export interface Config {
   base_url: string;
@@ -25,8 +25,8 @@ interface YieldValueImpl<T, D> {
 }
 
 export type YieldValue =
-  | YieldValueImpl<YieldType.DeviceCode, DeviceCode>
-  | YieldValueImpl<YieldType.Token, TokenPayload>;
+  | YieldValueImpl<"device_code", DeviceCode>
+  | YieldValueImpl<"token", TokenPayload>;
 
 function toUrlencoded(input: Record<string, string>): string {
   const params = new URLSearchParams();
@@ -37,11 +37,11 @@ function toUrlencoded(input: Record<string, string>): string {
 }
 
 export class DeviceAuthorizationGrant {
-  #storage: StorageProvider;
+  #storage: Storage;
   #config: Config;
 
   constructor(
-    storage: StorageProvider,
+    storage: Storage,
     config: Config,
   ) {
     this.#storage = storage;
@@ -53,7 +53,7 @@ export class DeviceAuthorizationGrant {
     if (token) {
       if (Date.now() - token.created_at < token.payload.expires_in * 1000) {
         yield {
-          state: YieldType.Token,
+          state: "token",
           data: token.payload,
         };
         return;
@@ -66,15 +66,16 @@ export class DeviceAuthorizationGrant {
         await this.#storage.save(refreshed_token);
 
         yield {
-          state: YieldType.Token,
+          state: "token",
           data: refreshed_token.payload,
         };
+        return;
       }
     }
 
     const device_code_response = await this.#requestDeviceCode();
     yield {
-      state: YieldType.DeviceCode,
+      state: "device_code",
       data: device_code_response,
     };
 
@@ -92,7 +93,7 @@ export class DeviceAuthorizationGrant {
     await this.#storage.save(token);
 
     yield {
-      state: YieldType.Token,
+      state: "token",
       data: token.payload,
     };
   }
