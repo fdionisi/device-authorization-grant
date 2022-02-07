@@ -12,10 +12,12 @@
 ### Deno
 
 ```ts
-import { DeviceAuthorizationGrant } from "https://github.com/fdionisi/device-authorization-grant/blob/0.2.0/device-authorization-grant.ts"
+import { DeviceAuthorizationGrant } from "https://github.com/fdionisi/device-authorization-grant/blob/0.2.0/device-authorization-grant.ts";
 
-const deviceAuthorizationGrant = new DeviceAuthorizationGrant(myStorage, config);
-
+const deviceAuthorizationGrant = new DeviceAuthorizationGrant(
+  myStorage,
+  config,
+);
 ```
 
 ### Node.js
@@ -25,10 +27,14 @@ const deviceAuthorizationGrant = new DeviceAuthorizationGrant(myStorage, config)
 import { DeviceAuthorizationGrant } from "@fdionisi/device-authorization-grant";
 
 // Common.js
-const { DeviceAuthorizationGrant } = require("@fdionisi/device-authorization-grant");
+const { DeviceAuthorizationGrant } = require(
+  "@fdionisi/device-authorization-grant",
+);
 
-const deviceAuthorizationGrant = new DeviceAuthorizationGrant(myStorage, config);
-
+const deviceAuthorizationGrant = new DeviceAuthorizationGrant(
+  myStorage,
+  config,
+);
 ```
 
 ## License

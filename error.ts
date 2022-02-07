@@ -1,6 +1,7 @@
 export enum DeviceAuthorizationGrantErrorType {
   AccessDenied = "access_denied",
   ExpiredToken = "expired_token",
+  NotFound = "not_found",
   Timeout = "timeout",
   Unknown = "unknown",
 }

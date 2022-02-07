@@ -19,10 +19,10 @@ export enum YieldType {
   Token,
 }
 
-interface YieldValueImpl<T, D> {
+type YieldValueImpl<T, D> = {
   state: T;
   data: D;
-}
+};
 
 export type YieldValue =
   | YieldValueImpl<"device_code", DeviceCode>
@@ -48,7 +48,9 @@ export class DeviceAuthorizationGrant {
     this.#config = config;
   }
 
-  async *retrieveToken(): AsyncIterableIterator<YieldValue> {
+  async *retrieveToken(
+    failOnEmptyStorage = false,
+  ): AsyncIterableIterator<YieldValue> {
     let token = await this.#storage.read();
     if (token) {
       if (Date.now() - token.created_at < token.payload.expires_in * 1000) {
@@ -71,6 +73,13 @@ export class DeviceAuthorizationGrant {
         };
         return;
       }
+    } else if (failOnEmptyStorage) {
+      throw new DeviceAuthorizationGrantError(
+        DeviceAuthorizationGrantErrorType.NotFound,
+        "Token not present in the underlying `Storage`. " +
+          "This error is caused by the parameter `failOnEmptyStorage` being set to `true`; " +
+          "to proceed with the normal authentication flow, ensure to set `failOnEmptyStorage` to explicitly set it to `false`, or leave it `undefined`.",
+      );
     }
 
     const device_code_response = await this.#requestDeviceCode();
