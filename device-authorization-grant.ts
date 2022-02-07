@@ -73,7 +73,9 @@ export class DeviceAuthorizationGrant {
         };
         return;
       }
-    } else if (failOnEmptyStorage) {
+    } 
+    
+    if (failOnEmptyStorage) {
       throw new DeviceAuthorizationGrantError(
         DeviceAuthorizationGrantErrorType.NotFound,
         "Token not present in the underlying `Storage`. " +
